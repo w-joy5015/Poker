@@ -110,6 +110,10 @@ var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _utils = __webpack_require__(/*! ../utils/utils */ "./utils/utils.js");
+
+var _utils2 = _interopRequireDefault(_utils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -129,6 +133,10 @@ var CurrentGame = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (CurrentGame.__proto__ || Object.getPrototypeOf(CurrentGame)).call(this, props));
 
     _this.handleClick = _this.handleClick.bind(_this);
+    _this.state = {
+      hand: [],
+      pokerHand: ""
+    };
     return _this;
   }
 
@@ -136,7 +144,7 @@ var CurrentGame = function (_React$Component) {
     key: "handleClick",
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
-        var deck, hand;
+        var deck, hand, handValue;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -150,23 +158,28 @@ var CurrentGame = function (_React$Component) {
 
               case 5:
                 hand = _context.sent;
+                handValue = (0, _utils2.default)(hand.data.cards);
 
-                console.log(hand.data);
-                _context.next = 12;
+                this.setState({
+                  hand: hand.data.cards,
+                  pokerHand: handValue
+                });
+                console.log(hand.data.cards);
+                _context.next = 14;
                 break;
 
-              case 9:
-                _context.prev = 9;
+              case 11:
+                _context.prev = 11;
                 _context.t0 = _context["catch"](0);
 
                 console.error(_context.t0);
 
-              case 12:
+              case 14:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[0, 9]]);
+        }, _callee, this, [[0, 11]]);
       }));
 
       function handleClick(_x) {
@@ -181,10 +194,34 @@ var CurrentGame = function (_React$Component) {
       return _react2.default.createElement(
         "div",
         null,
+        this.state.hand.length === 0 ? _react2.default.createElement(
+          "div",
+          null,
+          _react2.default.createElement(
+            "h1",
+            null,
+            "The deck has been shuffled"
+          ),
+          _react2.default.createElement(
+            "button",
+            { onClick: this.handleClick },
+            "Draw cards"
+          )
+        ) : _react2.default.createElement(
+          "div",
+          null,
+          _react2.default.createElement(
+            "h1",
+            null,
+            this.state.pokerHand
+          )
+        ),
         _react2.default.createElement(
-          "button",
-          { onClick: this.handleClick },
-          "Draw your cards"
+          "div",
+          { className: "cardImages" },
+          this.state.hand.map(function (card, idx) {
+            return _react2.default.createElement("img", { key: idx, src: card.image });
+          })
         )
       );
     }
@@ -45290,6 +45327,84 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+
+/***/ "./utils/utils.js":
+/*!************************!*\
+  !*** ./utils/utils.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var calculateHand = function calculateHand(arr) {
+
+  //Find if there more than one of a kind. Create an array in which the index will hold the number of other cards with the same value.
+  var numOfInstances = [1, 1, 1, 1, 1];
+  arr.forEach(function (card, idx) {
+    var arrOfCards = arr.filter(function (current) {
+      return current.value === card.value;
+    }); //O(n) time is n^2 (loop within a loop)
+    if (arrOfCards.length > numOfInstances[idx]) {
+      numOfInstances[idx] = arrOfCards.length;
+    }
+  });
+  if (numOfInstances.includes(4)) {
+    return "Four of a kind";
+  }
+  if (numOfInstances.includes(3) && numOfInstances.includes(2)) {
+    return "Full House";
+  }
+  if (numOfInstances.includes(3) && !numOfInstances.includes(2)) {
+    return "Three of a Kind";
+  }
+  if (numOfInstances.includes(2)) {
+    var numOfTwos = numOfInstances.reduce(function (acc, current) {
+      return acc + current;
+    });
+    if (numOfTwos > 7) {
+      return "Two Pair";
+    } else {
+      return "One Pair";
+    }
+  }
+
+  // //parse out arr into numArr that has only numbers
+  // const numArr = []
+  // arr.forEach(card => {
+  //   if(card.value==="KING"){
+  //     numArr.push(13)
+  //   }
+  //   if(card.value==="QUEEN"){
+  //     numArr.push(12)
+  //   }
+  //   if (card.value==="JACK"){
+  //     numArr.push(11)
+  //   }
+  //   if (card.value==="ACE"){
+  //     numArr.push(14)
+  //   }
+  //   if (card.value.length < 3) {
+  //     const number = Number(card.value)
+  //     numArr.push(number)
+  //   }
+  // });
+
+  // //sort from high to low
+  // const sortedArr = numArr.sort(function (a,b) {return a-b})
+
+  // //find the highest subsequence within the array (for Flush or Straight)
+
+
+  // //find if there are more than one of a kind
+  // return(sortedArr)
+  return "High Card";
+};
+
+module.exports = calculateHand;
 
 /***/ }),
 

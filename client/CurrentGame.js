@@ -1,11 +1,16 @@
 import React from 'react'
 import axios from "axios"
+import calculateHand from "../utils/utils"
 
 
 export default class CurrentGame extends React.Component {
   constructor(props){
     super(props)
     this.handleClick = this.handleClick.bind(this)
+    this.state = {
+      hand: [],
+      pokerHand: ""
+    }
   }
 
   async handleClick (event) {
@@ -13,7 +18,12 @@ export default class CurrentGame extends React.Component {
       event.preventDefault()
       const deck = this.props.deck
       const hand = await axios.get(`https://deckofcardsapi.com/api/deck/${deck}/draw/?count=5`)
-      console.log(hand.data)
+      const handValue = calculateHand(hand.data.cards)
+      this.setState({
+        hand: hand.data.cards,
+        pokerHand: handValue
+      })
+      console.log(hand.data.cards)
     }catch (err) {
       console.error(err)
     }
@@ -22,7 +32,22 @@ export default class CurrentGame extends React.Component {
   render(){
     return(
       <div>
-        <button onClick={this.handleClick}>Draw your cards</button>
+        {(this.state.hand.length===0) ?
+         <div>
+          <h1>The deck has been shuffled</h1>
+          <button onClick={this.handleClick}>Draw cards</button>
+         </div> :
+         <div>
+           <h1>{this.state.pokerHand}</h1>
+         </div>
+        }
+        <div className = "cardImages">
+          {this.state.hand.map((card, idx) => {
+            return (
+                <img key={idx} src={card.image}/>
+            )
+          })}
+        </div>
       </div>
     )
   }
