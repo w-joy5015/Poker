@@ -10,9 +10,6 @@ app.use(express.urlencoded({extended: true}))
 //serving up static files
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
-//api routes
-app.use('/api', require('./api'))
-
 // Sends our index.html (the "single page" of our SPA)
 app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'))

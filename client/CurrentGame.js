@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from "axios"
-import calculateHand from "../utils/utils"
+import calculateHand from "../utils/calculateHand"
 
 
 export default class CurrentGame extends React.Component {

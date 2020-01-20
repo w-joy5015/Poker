@@ -110,9 +110,9 @@ var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _utils = __webpack_require__(/*! ../utils/utils */ "./utils/utils.js");
+var _calculateHand = __webpack_require__(/*! ../utils/calculateHand */ "./utils/calculateHand.js");
 
-var _utils2 = _interopRequireDefault(_utils);
+var _calculateHand2 = _interopRequireDefault(_calculateHand);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -158,7 +158,7 @@ var CurrentGame = function (_React$Component) {
 
               case 5:
                 hand = _context.sent;
-                handValue = (0, _utils2.default)(hand.data.cards);
+                handValue = (0, _calculateHand2.default)(hand.data.cards);
 
                 this.setState({
                   hand: hand.data.cards,
@@ -45330,10 +45330,10 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./utils/utils.js":
-/*!************************!*\
-  !*** ./utils/utils.js ***!
-  \************************/
+/***/ "./utils/calculateHand.js":
+/*!********************************!*\
+  !*** ./utils/calculateHand.js ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45342,7 +45342,8 @@ module.exports = g;
 
 var calculateHand = function calculateHand(arr) {
 
-  //Find if there more than one of a kind. Create an array in which the index will hold the number of other cards with the same value.
+  //--Find if there more than one of a kind--
+  //Create an array in which the index will hold the number of other cards with the same value.
   var numOfInstances = [1, 1, 1, 1, 1];
   arr.forEach(function (card, idx) {
     var arrOfCards = arr.filter(function (current) {
@@ -45372,36 +45373,88 @@ var calculateHand = function calculateHand(arr) {
     }
   }
 
-  // //parse out arr into numArr that has only numbers
-  // const numArr = []
-  // arr.forEach(card => {
-  //   if(card.value==="KING"){
-  //     numArr.push(13)
-  //   }
-  //   if(card.value==="QUEEN"){
-  //     numArr.push(12)
-  //   }
-  //   if (card.value==="JACK"){
-  //     numArr.push(11)
-  //   }
-  //   if (card.value==="ACE"){
-  //     numArr.push(14)
-  //   }
-  //   if (card.value.length < 3) {
-  //     const number = Number(card.value)
-  //     numArr.push(number)
-  //   }
-  // });
+  //--check if there is a straight--
+  var isConsecutive = true; //The loop on line 61 will change this to false if it's not a straight
 
-  // //sort from high to low
-  // const sortedArr = numArr.sort(function (a,b) {return a-b})
+  //parse out arr into numArr that has only numbers. Ace will be given a default value of 14
+  var numArr = [];
+  arr.forEach(function (card) {
+    if (card.value === "KING") {
+      numArr.push(13);
+    }
+    if (card.value === "QUEEN") {
+      numArr.push(12);
+    }
+    if (card.value === "JACK") {
+      numArr.push(11);
+    }
+    if (card.value === "ACE") {
+      numArr.push(14);
+    }
+    if (card.value.length < 3) {
+      var number = Number(card.value);
+      numArr.push(number);
+    }
+  });
 
-  // //find the highest subsequence within the array (for Flush or Straight)
+  //Find the highest value card (in the case the hand is High Card)
+  var highCard = 0;
+  numArr.map(function (current) {
+    if (current > highCard) {
+      highCard = current;
+    }
+  });
+  switch (highCard) {
+    case 14:
+      highCard = "Ace";
+      break;
+    case 13:
+      highCard = "King";
+      break;
+    case 12:
+      highCard = "Queen";
+      break;
+    case 11:
+      highCard = "Jack";
+      break;
+  }
 
+  //if there is a 2, convert the Ace into a 1 (in the case of five-high straight). Then sort from low to high
+  if (numArr.includes(2) && numArr.includes(14)) {
+    var idxOfAce = numArr.findIndex(function (current) {
+      return current === 14;
+    });
+    numArr[idxOfAce] = 1;
+  }
+  var sortedArr = numArr.sort(function (a, b) {
+    return a - b;
+  });
 
-  // //find if there are more than one of a kind
-  // return(sortedArr)
-  return "High Card";
+  for (var i = 0; i < numArr.length - 1; i++) {
+    var currentVal = sortedArr[i];
+    var nextVal = sortedArr[i + 1];
+    if (currentVal !== nextVal - 1) {
+      isConsecutive = false;
+    }
+  }
+
+  //--check if cards are all of the same suit--
+  var isSameSuit = arr.every(function (current) {
+    return current.suit === arr[0].suit;
+  });
+
+  if (isSameSuit && isConsecutive) {
+    return "Straight Flush";
+  }
+  if (!isSameSuit && isConsecutive) {
+    return "Straight";
+  }
+  if (isSameSuit && !isConsecutive) {
+    return "Flush";
+  }
+
+  //if it fulfils none of the above, it must be a High Card
+  return "High Card " + highCard;
 };
 
 module.exports = calculateHand;
