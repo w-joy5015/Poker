@@ -6,7 +6,7 @@ This app uses the Deck of Cards API (https://deckofcardsapi.com/) to create deck
 
 ## Setup
 
-To start a game on your local device, Fork and clone the respository to your local computer and then open the terminal. Run `npm install` to install package dependancies. Then run `npm run start` to start the server. You will see it say in the terminal `listening on port 8080`, indicating that you can navigate to `localhost:8080` to see the app running on your local computer.
+To start the app on your local device, fork and clone the respository to your local computer and then open the terminal. Run `npm install` to install package dependancies. Then run `npm run start` to start the server. You will see it say in the terminal `listening on port 8080`, indicating that you can navigate to `localhost:8080` to see the app running on your local computer.
 
 ## Testing
 
