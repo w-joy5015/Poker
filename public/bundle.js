@@ -214,6 +214,11 @@ var CurrentGame = function (_React$Component) {
             "h1",
             null,
             this.state.pokerHand
+          ),
+          _react2.default.createElement(
+            "button",
+            { onClick: this.handleClick },
+            "Draw again from same deck"
           )
         ),
         _react2.default.createElement(

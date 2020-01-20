@@ -39,6 +39,7 @@ export default class CurrentGame extends React.Component {
          </div> :
          <div>
            <h1>{this.state.pokerHand}</h1>
+           <button onClick={this.handleClick}>Draw again from same deck</button>
          </div>
         }
         <div className = "cardImages">
