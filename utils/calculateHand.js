@@ -1,14 +1,20 @@
 const calculateHand = (arr) => {
 
   //--Find if there more than one of a kind--
-  //Create an array in which the index will hold the number of other cards with the same value.
-  let numOfInstances = [1, 1, 1, 1, 1]
-  arr.forEach((card, idx)=>{
-    let arrOfCards = arr.filter(current => current.value === card.value) //O(n) time is n^2 (loop within a loop)
-    if (arrOfCards.length>numOfInstances[idx]){
-      numOfInstances[idx] = arrOfCards.length
+  //create a dictionary that stores how many instances of each value there are in a hand
+  //dictionary should be in the format: {KING: 2, 1: 1, 10: 1, ACE: 1}
+  const handObj = {}
+  arr.map((current) => {
+    if (handObj[current.value]){
+      handObj[current.value] += 1
+    } else {
+      handObj[current.value] = 1
     }
   })
+
+  //create an array of the values from the handObj dictionary
+  const numOfInstances = Object.values(handObj)
+
   if (numOfInstances.includes(4)){
     return "Four of a kind"
   }
@@ -19,8 +25,7 @@ const calculateHand = (arr) => {
     return "Three of a Kind"
   }
   if (numOfInstances.includes(2)){
-    const numOfTwos = numOfInstances.reduce((acc, current)=> acc + current)
-    if (numOfTwos > 7){
+    if (numOfInstances.length === 3){
       return "Two Pair"
     } else {
       return "One Pair"
@@ -74,7 +79,7 @@ const calculateHand = (arr) => {
     const idxOfAce = numArr.findIndex(current => current === 14)
     numArr[idxOfAce] = 1;
   }
-  const sortedArr = numArr.sort(function (a,b) {return a-b})
+  const sortedArr = numArr.sort(function (a,b) {return a-b}) // sort method means O(n) is nlog(n)
 
   for (let i=0; i<numArr.length-1; i++){
     const currentVal = sortedArr[i]
